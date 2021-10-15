@@ -15,13 +15,28 @@ class WildfireModel:
         for f in self.spawned_fires:
             self.fire_map[f] = 1
 
-        # Gamma
         self.gamma = gamma
         self.wind_map = wind_map
+        
+        self.max_wind = max([
+            max([v for v in value.values()]) for value in self.wind_map.values()
+        ])
+        print(self.max_wind)
+        self._standardize_wind_map(self.wind_map)
+
+        # Generate negative weights
         self._generate_wind_map_negatives(self.wind_map)
 
         # Initial U(s)
         self.utility = [0]*10
+
+    # Standardize wind map to highest wind
+    def _standardize_wind_map(self, p):
+        pass
+
+    # Revert wind map
+    def _revert_wind_map(self, p):
+        pass
 
     # Generate negatives in wind map
     def _generate_wind_map_negatives(self, p):
