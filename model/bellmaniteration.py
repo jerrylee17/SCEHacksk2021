@@ -27,11 +27,14 @@ class WildfireModel:
         self.gamma = gamma
         self.wind_map = wind_map
 
-        self.max_wind = max(
-            [max([v for v in value.values()]) for value in self.wind_map.values()]
+        self._max_wind = max(
+            [max([v for v in value.values()] + [0]) for value in self.wind_map.values()]
         )
-        print(self.max_wind)
-        self._standardize_wind_map()
+
+        if self._max_wind >= 1:
+            self._standardize_wind_map()
+
+        # self._invert_wind_map()
 
         # Generate negative weights
         self._generate_wind_map_negatives()
@@ -39,13 +42,25 @@ class WildfireModel:
         # Initial U(s)
         self.utility = [0] * 10
 
+    # Invert wind map
+    def _invert_wind_map(self):
+        for key, value in self.wind_map.items():
+            for k, v in value.items():
+                self.wind_map[key][k] *= -1
+
     # Standardize wind map to highest wind
     def _standardize_wind_map(self):
-        pass
+        for key, value in self.wind_map.items():
+            for k, v in value.items():
+                if v is not None and v > 0:
+                    self.wind_map[key][k] = (
+                        0.95 * self.wind_map[key][k] / self._max_wind
+                    )
 
-    # Revert wind map
-    def _revert_wind_map(self):
-        pass
+    # Revert the utility values to scale with highest wind
+    def _revert_utility_values(self):
+        for i in range(len(self.utility)):
+            self.utility[i] = round(self.utility[i] * self._max_wind, 5)
 
     # Generate negatives in wind map
     def _generate_wind_map_negatives(self):
@@ -71,7 +86,6 @@ class WildfireModel:
 
     # Start off bellman iteration
     def score(self):
-
         # 100 iterations at most to reach equilibrium
         for i in range(100):
             tmp = self.utility.copy()
@@ -80,6 +94,8 @@ class WildfireModel:
             if self.utility == tmp:
                 break
             self.utility = tmp
+        if self._max_wind >= 1:
+            self._revert_utility_values()
         # print(f'============={i}TH ITERATION=============')
         # pp.pprint([(j, val) for j, val in enumerate(self.utility)])
         # print(f'=============SORTED IN ORDER OF RISK=============')
@@ -126,7 +142,8 @@ For ex: Wind going from 0 --> 2 will be represented like the following
     - 0: {2: -0.9}
     - 2: {0: 0.9}
 """
-WIND_MAP = {
+
+WIND_PROBABILITY_MAP = {
     0: {2: -0.9},
     1: {2: -0.3, 4: -0.5},
     2: {0: 0.9, 1: 0.3, 3: -0.6, 5: -0.5},
@@ -139,9 +156,29 @@ WIND_MAP = {
     9: {6: -0.3, 8: 0.3},
 }
 
+WIND_VALUE_MAP = {
+    0: {},
+    1: {},
+    2: {0: 12, 1: 4},
+    3: {2: 8},
+    4: {1: 7, 7: 4},
+    5: {2: 7, 4: 12, 8: 7},
+    6: {3: 7, 5: 8, 9: 4},
+    7: {},
+    8: {7: 7},
+    9: {8: 4},
+}
+
+for key, value in WIND_PROBABILITY_MAP.items():
+    for k, v in value.items():
+        if v is not None and v > 0:
+            WIND_PROBABILITY_MAP[key][k] = 14 * WIND_PROBABILITY_MAP[key][k]
+        else:
+            WIND_PROBABILITY_MAP[key][k] = None
+
 DEFAULT_RISK = 0.02
 SPAWNED_FIRES = [0, 8]
 GAMMA = 0.8
-model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_MAP)
+model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_VALUE_MAP)
 model.score()
 model.display()
