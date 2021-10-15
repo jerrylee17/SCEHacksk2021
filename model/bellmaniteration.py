@@ -22,28 +22,28 @@ class WildfireModel:
             max([v for v in value.values()]) for value in self.wind_map.values()
         ])
         print(self.max_wind)
-        self._standardize_wind_map(self.wind_map)
+        self._standardize_wind_map()
 
         # Generate negative weights
-        self._generate_wind_map_negatives(self.wind_map)
+        self._generate_wind_map_negatives()
 
         # Initial U(s)
         self.utility = [0]*10
 
     # Standardize wind map to highest wind
-    def _standardize_wind_map(self, p):
+    def _standardize_wind_map(self):
         pass
 
     # Revert wind map
-    def _revert_wind_map(self, p):
+    def _revert_wind_map(self):
         pass
 
     # Generate negatives in wind map
-    def _generate_wind_map_negatives(self, p):
-        for key, value in p.items():
+    def _generate_wind_map_negatives(self):
+        for key, value in self.wind_map.items():
             for k, v in value.items():
                 if v is not None and v > 0:
-                    p[k][key] = -1*p[key][k]
+                    self.wind_map[k][key] = -1*self.wind_map[key][k]
 
     # Bellman iteration on node
     def _bellman_iteration_on_node(self, x, u):
@@ -57,11 +57,11 @@ class WildfireModel:
             pathValues.append(probability*u[loc])
         if len(pathValues) == 0:
             pathValues.append(0)
-        Us = round(
+        utility_value = round(
             self.fire_map[x] + self.gamma * max(pathValues),
             5
         )
-        return Us
+        return utility_value
 
     # Start off bellman iteration
     def score(self):
@@ -75,9 +75,9 @@ class WildfireModel:
                 break
             self.utility = tmp
         # print(f'============={i}TH ITERATION=============')
-        # pp.pprint([(j, val) for j, val in enumerate(fire)])
+        # pp.pprint([(j, val) for j, val in enumerate(self.utility)])
         # print(f'=============SORTED IN ORDER OF RISK=============')
-        # pp.pprint(sorted([(j, val) for j, val in enumerate(fire)], key=lambda x: x[1], reverse=True))
+        # pp.pprint(sorted([(j, val) for j, val in enumerate(self.utility)], key=lambda x: x[1], reverse=True))
 
     def display(self):
         print(f'=============UNSORTED=============')
