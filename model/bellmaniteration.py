@@ -1,5 +1,75 @@
 import pprint
+from typing import Dict, List
 pp = pprint.PrettyPrinter(indent=4)
+
+class WildfireModel:
+
+    def __init__(self, default_risk : float, spawned_fires: List[int], gamma: float, wind_map):
+        # How easy it is for the fire to spread at every location in the map - R(s)
+        self.default_risk = default_risk
+        self.fire_map = [self.default_risk]*10
+
+        # Spawn a fire at location 8
+        self.spawned_fires = spawned_fires
+        # Put spawned fires into fire map
+        for f in self.spawned_fires:
+            self.fire_map[f] = 1
+
+        # Gamma
+        self.gamma = gamma
+        self.wind_map = wind_map
+        self._generate_wind_map_negatives(self.wind_map)
+
+        # Initial U(s)
+        self.utility = [0]*10
+
+    # Generate negatives in wind map
+    def _generate_wind_map_negatives(self, p):
+        for key, value in p.items():
+            for k, v in value.items():
+                if v is not None and v > 0:
+                    p[k][key] = -1*p[key][k]
+
+    # Bellman iteration on node
+    def _bellman_iteration_on_node(self, x, u):
+        if x in self.spawned_fires:
+            return 1
+        pathValues = []
+        # Iteration on neighbors
+        for loc, probability in self.wind_map[x].items():
+            if probability is None:
+                continue
+            pathValues.append(probability*u[loc])
+        if len(pathValues) == 0:
+            pathValues.append(0)
+        Us = round(
+            self.fire_map[x] + self.gamma * max(pathValues),
+            5
+        )
+        return Us
+
+    # Start off bellman iteration
+    def score(self):
+
+        # 100 iterations at most to reach equilibrium
+        for i in range(100):
+            tmp = self.utility.copy()
+            for x in range(len(self.utility)):
+                tmp[x] = self._bellman_iteration_on_node(x, self.utility)
+            if self.utility == tmp:
+                break
+            self.utility = tmp
+        # print(f'============={i}TH ITERATION=============')
+        # pp.pprint([(j, val) for j, val in enumerate(fire)])
+        # print(f'=============SORTED IN ORDER OF RISK=============')
+        # pp.pprint(sorted([(j, val) for j, val in enumerate(fire)], key=lambda x: x[1], reverse=True))
+
+    def display(self):
+        print(f'=============UNSORTED=============')
+        pp.pprint([(j, val) for j, val in enumerate(self.utility)])
+        print(f'=============SORTED IN ORDER OF RISK=============')
+        pp.pprint(sorted([(j, val) for j, val in enumerate(self.utility)], key=lambda x: x[1], reverse=True))
+
 
 '''
 Assume map looks like this
@@ -19,7 +89,7 @@ For ex: Wind going from 0 --> 2 will be represented like the following
     - 0: {2: -0.9}
     - 2: {0: 0.9}
 '''
-windMap = {
+WIND_MAP = {
     0: {2: -0.9},
     1: {2: -0.3, 4: -0.5},
     2: {0: 0.9, 1: 0.3, 3: -0.6, 5: -0.5},
@@ -32,60 +102,9 @@ windMap = {
     9: {6: -0.3, 8: 0.3}
 }
 
-# Generate negatives in wind map
-def genNegatives(p):
-    for key, value in p.items():
-        for k, v in value.items():
-            if v is not None and v > 0:
-                p[k][key] = -1*p[key][k]
-
-genNegatives(windMap)
-
-# How easy it is for the fire to spread at every location in the map - R(s)
-default_risk = 0.02
-fireMap = [default_risk]*10
-
-# Spawn a fire at location 8
-spawnedFire = [0, 8]
-# Put spawned fires into fire map
-for f in spawnedFire:
-    fireMap[f] = 1
-
-# Gamma
-G = 0.8
-
-def fireBellmanIteration(x, u):
-    if x in spawnedFire:
-        return 1
-    pathValues = []
-    # Iteration on neighbors
-    for loc, probability in windMap[x].items():
-        if probability is None:
-            continue
-        pathValues.append(probability*u[loc])
-    if len(pathValues) == 0:
-        pathValues.append(0)
-    Us = round(
-        fireMap[x] + G * max(pathValues),
-        5
-    )
-    return Us
-
-def fireBellman():
-    # Initial U(s)
-    fire = [0]*10
-
-    # 100 iterations at most to reach equilibrium
-    for i in range(100):
-        tmp = fire.copy()
-        for x in range(len(fire)):
-            tmp[x] = fireBellmanIteration(x, fire)
-        if fire == tmp:
-            break
-        fire = tmp
-    print(f'============={i}TH ITERATION=============')
-    pp.pprint([(j, val) for j, val in enumerate(fire)])
-    print(f'=============SORTED IN ORDER OF RISK=============')
-    pp.pprint(sorted([(j, val) for j, val in enumerate(fire)], key=lambda x: x[1], reverse=True))
-
-fireBellman()
+DEFAULT_RISK = 0.02
+SPAWNED_FIRES = [0,8]
+GAMMA = 0.8
+model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_MAP)
+model.score()
+model.display()
