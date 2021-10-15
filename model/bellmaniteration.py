@@ -1,13 +1,17 @@
 import pprint
+import csv
 from typing import Dict, List
+
 pp = pprint.PrettyPrinter(indent=4)
 
-class WildfireModel:
 
-    def __init__(self, default_risk : float, spawned_fires: List[int], gamma: float, wind_map):
+class WildfireModel:
+    def __init__(
+        self, default_risk: float, spawned_fires: List[int], gamma: float, wind_map
+    ):
         # How easy it is for the fire to spread at every location in the map - R(s)
         self.default_risk = default_risk
-        self.fire_map = [self.default_risk]*10
+        self.fire_map = [self.default_risk] * 10
 
         # Spawn a fire at location 8
         self.spawned_fires = spawned_fires
@@ -17,10 +21,10 @@ class WildfireModel:
 
         self.gamma = gamma
         self.wind_map = wind_map
-        
-        self.max_wind = max([
-            max([v for v in value.values()]) for value in self.wind_map.values()
-        ])
+
+        self.max_wind = max(
+            [max([v for v in value.values()]) for value in self.wind_map.values()]
+        )
         print(self.max_wind)
         self._standardize_wind_map()
 
@@ -28,7 +32,7 @@ class WildfireModel:
         self._generate_wind_map_negatives()
 
         # Initial U(s)
-        self.utility = [0]*10
+        self.utility = [0] * 10
 
     # Standardize wind map to highest wind
     def _standardize_wind_map(self):
@@ -43,7 +47,7 @@ class WildfireModel:
         for key, value in self.wind_map.items():
             for k, v in value.items():
                 if v is not None and v > 0:
-                    self.wind_map[k][key] = -1*self.wind_map[key][k]
+                    self.wind_map[k][key] = -1 * self.wind_map[key][k]
 
     # Bellman iteration on node
     def _bellman_iteration_on_node(self, x, u):
@@ -54,13 +58,10 @@ class WildfireModel:
         for loc, probability in self.wind_map[x].items():
             if probability is None:
                 continue
-            pathValues.append(probability*u[loc])
+            pathValues.append(probability * u[loc])
         if len(pathValues) == 0:
             pathValues.append(0)
-        utility_value = round(
-            self.fire_map[x] + self.gamma * max(pathValues),
-            5
-        )
+        utility_value = round(self.fire_map[x] + self.gamma * max(pathValues), 5)
         return utility_value
 
     # Start off bellman iteration
@@ -80,13 +81,25 @@ class WildfireModel:
         # pp.pprint(sorted([(j, val) for j, val in enumerate(self.utility)], key=lambda x: x[1], reverse=True))
 
     def display(self):
-        print(f'=============UNSORTED=============')
+        print(f"=============UNSORTED=============")
         pp.pprint([(j, val) for j, val in enumerate(self.utility)])
-        print(f'=============SORTED IN ORDER OF RISK=============')
-        pp.pprint(sorted([(j, val) for j, val in enumerate(self.utility)], key=lambda x: x[1], reverse=True))
+        print(f"=============SORTED IN ORDER OF RISK=============")
+        pp.pprint(
+            sorted(
+                [(j, val) for j, val in enumerate(self.utility)],
+                key=lambda x: x[1],
+                reverse=True,
+            )
+        )
+
+    def to_csv(self, filename="output.csv"):
+        with open(filename, "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            for i, value in enumerate(self.utility):
+                writer.writerow([i, value])
 
 
-'''
+"""
 Assume map looks like this
   0
 1 2 3
@@ -94,16 +107,16 @@ Assume map looks like this
 7 8 9
 
     - Wind speed needs to be standardized between 0 and 1
-'''
+"""
 
-'''
+"""
 Wind map (probabilities)
 Negative = wind going out
 Positive = wind coming in
 For ex: Wind going from 0 --> 2 will be represented like the following
     - 0: {2: -0.9}
     - 2: {0: 0.9}
-'''
+"""
 WIND_MAP = {
     0: {2: -0.9},
     1: {2: -0.3, 4: -0.5},
@@ -114,11 +127,11 @@ WIND_MAP = {
     6: {3: 0.5, 5: 0.6, 9: 0.3},
     7: {4: -0.3, 8: -0.5},
     8: {5: -0.5, 7: 0.5, 9: -0.3},
-    9: {6: -0.3, 8: 0.3}
+    9: {6: -0.3, 8: 0.3},
 }
 
 DEFAULT_RISK = 0.02
-SPAWNED_FIRES = [0,8]
+SPAWNED_FIRES = [0, 8]
 GAMMA = 0.8
 model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_MAP)
 model.score()
