@@ -38,7 +38,7 @@ class WildfireModel:
         # Generate negative weights
         self._generate_wind_map_negatives()
 
-        self._invert_wind_map()
+        # self._invert_wind_map()
 
         # Initial U(s)
         self.utility = [0] * 10
