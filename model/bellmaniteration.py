@@ -34,10 +34,11 @@ class WildfireModel:
         if self._max_wind >= 1:
             self._standardize_wind_map()
 
-        # self._invert_wind_map()
 
         # Generate negative weights
         self._generate_wind_map_negatives()
+
+        self._invert_wind_map()
 
         # Initial U(s)
         self.utility = [0] * 10
