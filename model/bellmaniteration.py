@@ -1,5 +1,10 @@
 import pprint
+import os
 import csv
+import boto3
+
+s3 = boto3.resource("s3")
+
 from typing import Dict, List
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -92,11 +97,15 @@ class WildfireModel:
             )
         )
 
-    def to_csv(self, filename="output.csv"):
-        with open(filename, "w", newline="") as csvfile:
+    def to_csv(self, file_path="/tmp/output.csv"):
+        with open(file_path, "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
             for i, value in enumerate(self.utility):
                 writer.writerow([i, value])
+
+    def upload_to_s3(self, file_path="/tmp/output.csv", bucket_name="sce-hacks-arson"):
+        s3 = boto3.resource("s3")
+        s3.meta.client.upload_file(file_path, bucket_name, os.path.split(file_path)[1])
 
 
 """
