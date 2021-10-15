@@ -67,8 +67,10 @@ class WildfireModel:
     def _generate_wind_map_negatives(self):
         for key, value in self.wind_map.items():
             for k, v in value.items():
-                if v is not None and v > 0:
-                    self.wind_map[k][key] = -1 * self.wind_map[key][k]
+                # if v is not None and v > 0:
+                #     self.wind_map[k][key] = -1 * self.wind_map[key][k]
+                if v < 0:
+                    self.wind_map[key][k] = 0
 
     # Bellman iteration on node
     def _bellman_iteration_on_node(self, x, u):
@@ -178,7 +180,7 @@ for key, value in WIND_PROBABILITY_MAP.items():
             WIND_PROBABILITY_MAP[key][k] = None
 
 DEFAULT_RISK = 0.02
-SPAWNED_FIRES = [0, 8]
+SPAWNED_FIRES = [6, 9]
 GAMMA = 0.8
 model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_VALUE_MAP)
 model.score()
