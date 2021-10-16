@@ -4,7 +4,7 @@ const {
 } = require('./config.json')
 const AWS = require('aws-sdk');
 
-const get_scores = async () => {
+const get_scores = () => {
     AWS.config.update({
         accessKeyId: access_key_ID, 
         secretAccessKey: secret_access_key,
@@ -13,18 +13,26 @@ const get_scores = async () => {
 
     var lambda = new AWS.Lambda();
     var params = {
-    FunctionName: 'arn:aws:lambda:us-west-1:593661235042:function:get_scores', 
+        FunctionName: 'arn:aws:lambda:us-west-1:593661235042:function:get_scores', 
     };
-    let response = new Promise((resolve, reject) => {
-        lambda.invoke(params, function(err, data) {
+    return new Promise((resolve, reject) => {
+        lambda.invoke(params, (err, data) => {
             if (err) reject(err);            // an error occurred
-            else     resolve(data);           // successful response
+            resolve(data);           // successful response
         });
     })
-    return response
 }
-// const data = get_scores().then((res) => {
+// get_scores().then((res) => {
 //     console.log(res);
 // })
+const test = async() => {
+    const x = (await get_scores()).Payload
+    console.log(JSON.parse(x));
+    for (var key in x.body){
+        console.log(key);
+    }
+    return x
+}
+test()
 
 module.exports = {get_scores}

@@ -38,7 +38,9 @@ class WildfireModel:
         # Generate negative weights
         self._generate_wind_map_negatives()
 
-        # self._invert_wind_map()
+        self._invert_wind_map()
+
+        # pp.pprint(self.wind_map)
 
         # Initial U(s)
         self.utility = [0] * 10
@@ -67,10 +69,11 @@ class WildfireModel:
     def _generate_wind_map_negatives(self):
         for key, value in self.wind_map.items():
             for k, v in value.items():
-                # if v is not None and v > 0:
-                #     self.wind_map[k][key] = -1 * self.wind_map[key][k]
-                if v < 0:
-                    self.wind_map[key][k] = 0
+                if v is not None and v > 0:
+                    self.wind_map[k][key] = -1 * self.wind_map[key][k]
+                    # self.wind_map[k][key] = 0
+                # if v < 0:
+                #     self.wind_map[key][k] = 0
 
     # Bellman iteration on node
     def _bellman_iteration_on_node(self, x, u):
@@ -97,14 +100,23 @@ class WildfireModel:
             if self.utility == tmp:
                 break
             self.utility = tmp
-        
+
+        self.remove_negatives()
+        print(f'============={i}TH ITERATION=============')
         # Revert utility values
-        if self._max_wind >= 1:
-            self._revert_utility_values()
+        # if self._max_wind >= 1:
+        #     self._revert_utility_values()
         # print(f'============={i}TH ITERATION=============')
         # pp.pprint([(j, val) for j, val in enumerate(self.utility)])
         # print(f'=============SORTED IN ORDER OF RISK=============')
         # pp.pprint(sorted([(j, val) for j, val in enumerate(self.utility)], key=lambda x: x[1], reverse=True))
+    
+    def remove_negatives(self):
+        for i, x in enumerate(self.utility):
+            if x < 0:
+                self.utility[i] = 0
+            # self.utility[i] = min(self.utility[i] + 0.3, 1)
+            self.utility[i] = min((self.utility[i]+0.04) * 1.2, 1)
 
     def display(self):
         print(f"=============UNSORTED=============")
@@ -174,6 +186,61 @@ WIND_VALUE_MAP = {
     9: {8: 4},
 }
 
+# Graph
+GRAPH = {
+    0: {1, 2, 4, 5, 6, 7, 8},
+    1: {0, 2, 8, 9},
+    2: {0, 1, 4},
+    3: {2, 4},
+    4: {0, 2, 3, 5, 6},
+    5: {0, 4, 6},
+    6: {0, 4, 5, 7},
+    7: {0, 6, 8},
+    8: {0, 1, 7, 9},
+    9: {1, 8},
+}
+
+WIND_SIMULATION_1 = {
+    0: {1: 18, 8: 25},
+    1: {},
+    2: {0: 20, 1: 8, 4: 10},
+    3: {2: 15, 4: 12},
+    4: {0: 12, 2: 4, 5: 4, 6: 2},
+    5: {0: 5, 6: 10},
+    6: {0: 10},
+    7: {0: 11, 6: 8},
+    8: {0: 10, 1: 10, 7: 12},
+    9: {1: 20, 8: 15},
+}
+
+# Southeast breeze
+WIND_SIMULATION_2 = {
+    0: {6: 4, 7: 5, 8: 11},
+    1: {0: 15, 8: 11, 9: 8},
+    2: {0: 10, 1: 7, 4: 11},
+    3: {2: 10, 4: 12},
+    4: {0: 6, 5: 10, 6: 4},
+    5: {6: 17},
+    6: {7: 15},
+    7: {},
+    8: {7: 11},
+    9: {9: 10},
+}
+
+# Southeast breeze with airbender in santa clara
+WIND_SIMULATION_3 = {
+    0: {1: 40, 2: 40, 4: 40, 5: 40, 6: 40, 7: 40, 8: 40},
+    1: {8: 11, 9: 8},
+    2: {1: 7, 4: 11},
+    3: {2: 10, 4: 12},
+    4: {5: 10, 6: 4},
+    5: {6: 17},
+    6: {7: 15},
+    7: {},
+    8: {7: 11},
+    9: {9: 10},
+}
+
 for key, value in WIND_PROBABILITY_MAP.items():
     for k, v in value.items():
         if v is not None and v > 0:
@@ -182,9 +249,9 @@ for key, value in WIND_PROBABILITY_MAP.items():
             WIND_PROBABILITY_MAP[key][k] = None
 
 DEFAULT_RISK = 0.02
-SPAWNED_FIRES = [0, 8]
+SPAWNED_FIRES = [3]
 GAMMA = 0.8
-model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_VALUE_MAP)
+model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_SIMULATION_2)
 model.score()
 model.display()
 model.to_csv()
