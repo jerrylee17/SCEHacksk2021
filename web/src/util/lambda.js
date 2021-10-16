@@ -4,7 +4,7 @@ const {
 } = require('./config.json')
 const AWS = require('aws-sdk');
 
-const get_scores = () => {
+export const get_scores = () => {
     AWS.config.update({
         accessKeyId: access_key_ID, 
         secretAccessKey: secret_access_key,
@@ -25,14 +25,13 @@ const get_scores = () => {
 // get_scores().then((res) => {
 //     console.log(res);
 // })
-const test = async() => {
-    const x = (await get_scores()).Payload
-    console.log(JSON.parse(x));
-    for (var key in x.body){
-        console.log(key);
-    }
-    return x
-}
-test()
+// const test = async() => {
+//     const x = (await get_scores()).Payload
+//     console.log(JSON.parse(x));
+//     for (var key in x.body){
+//         console.log(key);
+//     }
+//     return x
+// }
+// test()
 
-module.exports = {get_scores}

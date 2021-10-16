@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import counties from "../counties.json";
 import Plot from "react-plotly.js";
-import { get_scores } from '../helper/lambda';
+import { get_scores } from '../util/lambda';
 
 class Map extends Component {
     constructor(props) {

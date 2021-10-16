@@ -2,6 +2,7 @@ import pprint
 import os
 import csv
 import boto3
+from random import random
 
 s3 = boto3.resource("s3")
 
@@ -172,6 +173,12 @@ WIND_PROBABILITY_MAP = {
     8: {5: -0.5, 7: 0.5, 9: -0.3},
     9: {6: -0.3, 8: 0.3},
 }
+for key, value in WIND_PROBABILITY_MAP.items():
+    for k, v in value.items():
+        if v is not None and v > 0:
+            WIND_PROBABILITY_MAP[key][k] = 14 * WIND_PROBABILITY_MAP[key][k]
+        else:
+            WIND_PROBABILITY_MAP[key][k] = None
 
 WIND_VALUE_MAP = {
     0: {},
@@ -241,17 +248,29 @@ WIND_SIMULATION_3 = {
     9: {9: 10},
 }
 
-for key, value in WIND_PROBABILITY_MAP.items():
+# Southeast breeze random
+WIND_SIMULATION_RANDOM = {
+    0: {6: 4, 7: 5, 8: 11},
+    1: {0: 15, 8: 11, 9: 8},
+    2: {0: 10, 1: 7, 4: 11},
+    3: {2: 10, 4: 12},
+    4: {0: 6, 5: 10, 6: 4},
+    5: {6: 17},
+    6: {7: 15},
+    7: {},
+    8: {7: 11},
+    9: {9: 10},
+}
+for key, value in WIND_SIMULATION_RANDOM.items():
     for k, v in value.items():
-        if v is not None and v > 0:
-            WIND_PROBABILITY_MAP[key][k] = 14 * WIND_PROBABILITY_MAP[key][k]
-        else:
-            WIND_PROBABILITY_MAP[key][k] = None
+        # Random float between 0 and 20
+        WIND_SIMULATION_RANDOM[key][k] = random()*20
+# pp.pprint(WIND_SIMULATION_RANDOM)
 
 DEFAULT_RISK = 0.02
-SPAWNED_FIRES = [3]
+SPAWNED_FIRES = [3,9]
 GAMMA = 0.8
-model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_SIMULATION_2)
+model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_SIMULATION_RANDOM)
 model.score()
 model.display()
 model.to_csv()
