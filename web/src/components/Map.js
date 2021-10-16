@@ -15,11 +15,9 @@ class Map extends Component {
             feature['id'] = feature['properties']['GEO_ID'].substring(9);
         }
         const data = await this.runInference()
-        console.log(data);
         this.setState({
             data: data
         })
-        console.log(this.state);
     }
 
     async runInference() {
@@ -28,24 +26,21 @@ class Map extends Component {
         //     'statusCode': 200, 
         //     'body': {'0': '1', '1': '0.01034', '2': '0.74', '3': '0.3752', '4': '0.02414',
         //                 '5': '0.5', '6': '0.6', '7': '0.7', '8': '0.8', '9': '0.9'}};
-        
-        await get_scores().then((res) => {
-            const inference = res.Payload
-            // console.log(inference);
-            const county_map = {'0': '06085', '1': '06087', '2': '06081', '3': '06075', '4': '06001', '5': '06077',
-                                '6': '06099', '7': '06047', '8': '06069', '9': '06053'};
-            const county_names = {'0': 'Santa Clara', '1': 'Santa Cruz', '2': 'San Mateo', '3': 'San Francisco', '4': 'Alameda',
-                                '5': 'San Joaquin', '6': 'Stanislaus', '7': 'Merced', '8': 'San Benito', '9': 'Monterey'};
-            var idList = [];
-            var valList = [];
-            var nameList = [];
-            for (var key in inference["body"]) {
-                idList.push(county_map[key]);
-                valList.push(inference["body"][key]);
-                nameList.push(county_names[key]);
-            }
-            return {'id': idList, 'val': valList, 'name': nameList};
-        })
+        const asyncResponse = await get_scores()
+        const inference = JSON.parse(asyncResponse.Payload)
+        const county_map = {'0': '06085', '1': '06087', '2': '06081', '3': '06075', '4': '06001', '5': '06077',
+                            '6': '06099', '7': '06047', '8': '06069', '9': '06053'};
+        const county_names = {'0': 'Santa Clara', '1': 'Santa Cruz', '2': 'San Mateo', '3': 'San Francisco', '4': 'Alameda',
+                            '5': 'San Joaquin', '6': 'Stanislaus', '7': 'Merced', '8': 'San Benito', '9': 'Monterey'};
+        var idList = [];
+        var valList = [];
+        var nameList = [];
+        for (var key in inference["body"]) {
+            idList.push(county_map[key]);
+            valList.push(inference["body"][key]);
+            nameList.push(county_names[key]);
+        }
+        return {'id': idList, 'val': valList, 'name': nameList};
     }
 
     render() {
