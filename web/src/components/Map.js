@@ -66,7 +66,7 @@ class Map extends Component {
                             text: this.state.data["name"]} ] }
                     layout = { {
                             width: 1500, height: 700,
-                            geo: {fitbounds: "locations", visible: true},
+                            geo: {fitbounds: "locations", visible: false},
                             margin: {r:0,t:0,l:0,b:0} } }
                 />
             </div>
