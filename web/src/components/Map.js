@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import counties from "./counties.json";
+import counties from "../counties.json";
 import Plot from "react-plotly.js";
 
 class Map extends Component {

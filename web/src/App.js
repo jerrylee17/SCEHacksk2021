@@ -1,5 +1,5 @@
 import React from "react";
-import Map from "./Map";
+import Map from "./components/Map";
 
 class App extends React.Component {
   constructor(props) {
@@ -28,8 +28,10 @@ class App extends React.Component {
   render() {
     return (
       <div class="App">
+        <nav class="navbar navbar-dark bg-dark text-center">
+          <div class="container-fluid justify-content-center navbar-brand">Arson Map</div>
+        </nav>
         <div class="container">
-          <h1>Arson</h1>
           <Map/>
           <form onSubmit={this.handleSubmit}>
             <textarea type="text" onChange={this.handleChange}>{this.state.text}</textarea>
