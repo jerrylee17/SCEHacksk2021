@@ -97,6 +97,8 @@ class WildfireModel:
             if self.utility == tmp:
                 break
             self.utility = tmp
+        
+        # Revert utility values
         if self._max_wind >= 1:
             self._revert_utility_values()
         # print(f'============={i}TH ITERATION=============')
@@ -116,13 +118,13 @@ class WildfireModel:
             )
         )
 
-    def to_csv(self, file_path="/tmp/output.csv"):
+    def to_csv(self, file_path="./tmp/output.csv"):
         with open(file_path, "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
             for i, value in enumerate(self.utility):
                 writer.writerow([i, value])
 
-    def upload_to_s3(self, file_path="/tmp/output.csv", bucket_name="sce-hacks-arson"):
+    def upload_to_s3(self, file_path="./tmp/output.csv", bucket_name="sce-hacks-arson"):
         s3 = boto3.resource("s3")
         s3.meta.client.upload_file(file_path, bucket_name, os.path.split(file_path)[1])
 
@@ -180,8 +182,10 @@ for key, value in WIND_PROBABILITY_MAP.items():
             WIND_PROBABILITY_MAP[key][k] = None
 
 DEFAULT_RISK = 0.02
-SPAWNED_FIRES = [6, 9]
+SPAWNED_FIRES = [0, 8]
 GAMMA = 0.8
 model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_VALUE_MAP)
 model.score()
 model.display()
+model.to_csv()
+# model.upload_to_s3()
