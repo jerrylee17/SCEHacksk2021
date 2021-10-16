@@ -58,16 +58,20 @@ class Map extends Component {
         return (
             <div>
                 <Plot
-                    data = { [ {
+                    data = {[{
                             type: "choropleth",
                             geojson: counties,
+                            zmin: 0,
+                            zmax: 1,
                             locations: this.state.data["id"],
                             z: this.state.data["val"],
-                            text: this.state.data["name"]} ] }
-                    layout = { {
+                            text: this.state.data["name"]
+                        }]}
+                    layout = {{
                             width: 1500, height: 700,
                             geo: {fitbounds: "locations", visible: false},
-                            margin: {r:0,t:0,l:0,b:0} } }
+                            margin: {r:0,t:0,l:0,b:0}
+                        }}
                 />
             </div>
         )

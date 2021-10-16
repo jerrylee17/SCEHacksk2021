@@ -110,11 +110,13 @@ class WildfireModel:
         # pp.pprint([(j, val) for j, val in enumerate(self.utility)])
         # print(f'=============SORTED IN ORDER OF RISK=============')
         # pp.pprint(sorted([(j, val) for j, val in enumerate(self.utility)], key=lambda x: x[1], reverse=True))
+    
     def remove_negatives(self):
         for i, x in enumerate(self.utility):
             if x < 0:
                 self.utility[i] = 0
             # self.utility[i] = min(self.utility[i] + 0.3, 1)
+            self.utility[i] = min((self.utility[i]+0.04) * 1.2, 1)
 
     def display(self):
         print(f"=============UNSORTED=============")
@@ -225,6 +227,20 @@ WIND_SIMULATION_2 = {
     9: {9: 10},
 }
 
+# Southeast breeze with airbender in santa clara
+WIND_SIMULATION_3 = {
+    0: {1: 40, 2: 40, 4: 40, 5: 40, 6: 40, 7: 40, 8: 40},
+    1: {8: 11, 9: 8},
+    2: {1: 7, 4: 11},
+    3: {2: 10, 4: 12},
+    4: {5: 10, 6: 4},
+    5: {6: 17},
+    6: {7: 15},
+    7: {},
+    8: {7: 11},
+    9: {9: 10},
+}
+
 for key, value in WIND_PROBABILITY_MAP.items():
     for k, v in value.items():
         if v is not None and v > 0:
@@ -233,7 +249,7 @@ for key, value in WIND_PROBABILITY_MAP.items():
             WIND_PROBABILITY_MAP[key][k] = None
 
 DEFAULT_RISK = 0.02
-SPAWNED_FIRES = [0, 3, 9]
+SPAWNED_FIRES = [3]
 GAMMA = 0.8
 model = WildfireModel(DEFAULT_RISK, SPAWNED_FIRES, GAMMA, WIND_SIMULATION_2)
 model.score()
