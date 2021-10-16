@@ -33,11 +33,11 @@ class App extends React.Component {
         </nav>
         <div class="container">
           <Map/>
-          <form onSubmit={this.handleSubmit}>
+          {/* <form onSubmit={this.handleSubmit}>
             <textarea type="text" onChange={this.handleChange}>{this.state.text}</textarea>
             <br />
             <input class="btn btn-primary" type="submit" value="Submit" />
-          </form>
+          </form> */}
           <div>
             
           </div>

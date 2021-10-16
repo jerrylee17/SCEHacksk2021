@@ -6,11 +6,12 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "aws-sdk": "^2.1009.0",
     "plotly.js": "^2.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-plotly.js": "^2.5.1",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^3.4.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
