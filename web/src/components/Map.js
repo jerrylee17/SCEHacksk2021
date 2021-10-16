@@ -30,8 +30,18 @@ class Map extends Component {
         const inference = JSON.parse(asyncResponse.Payload)
         const county_map = {'0': '06085', '1': '06087', '2': '06081', '3': '06075', '4': '06001', '5': '06077',
                             '6': '06099', '7': '06047', '8': '06069', '9': '06053'};
-        const county_names = {'0': 'Santa Clara', '1': 'Santa Cruz', '2': 'San Mateo', '3': 'San Francisco', '4': 'Alameda',
-                            '5': 'San Joaquin', '6': 'Stanislaus', '7': 'Merced', '8': 'San Benito', '9': 'Monterey'};
+        const county_names = {
+            '0': 'Santa Clara', 
+            '1': 'Santa Cruz', 
+            '2': 'San Mateo', 
+            '3': 'San Francisco', 
+            '4': 'Alameda',
+            '5': 'San Joaquin', 
+            '6': 'Stanislaus', 
+            '7': 'Merced', 
+            '8': 'San Benito', 
+            '9': 'Monterey'
+        };
         var idList = [];
         var valList = [];
         var nameList = [];
