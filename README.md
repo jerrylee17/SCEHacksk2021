@@ -75,6 +75,11 @@ had implemented a machine learning model and connected it to a web app.
 > I learned numerous of new concepts, such as working with AWS, writing 
 > algorithms, and the graph data structures. - Romuz Abdulhamidov
 
+> This was my first hackathon as well, and I was very happy with how the team
+> worked through the project. I think we picked a really interesting idea,
+> organized and collaborated well, and gained a good amount of exposure in the 
+> concepts of reinforcement learning, and with tools like AWS. - Raaj Patil
+
 ## What's next for Arson
 - Scale up to entire California to generate a better map during wildfire 
 season
