@@ -65,6 +65,12 @@ a fairly complex project compared to a standard web app.
 This hackathon was a first for many of us. This was the first time any of us 
 had implemented a machine learning model and connected it to a web app. 
 
+This was my first time at a hackathon and I couldn't have asked for better
+teammates than Jerry, Raaj, and Romuz. I learned so much over the last two
+days about machine learning, data science, React, and working as a team to
+help tackle some of California's greatest challenges.
+- Austin Rivard
+
 ## What's next for Arson
 - Scale up to entire California to generate a better map during wildfire 
 season
