@@ -73,8 +73,7 @@ had implemented a machine learning model and connected it to a web app.
 > As a first-year student, I have learned a lot of new skill sets while
 > working with this team. I was happy to be a member of such an agile team.
 > I learned numerous of new concepts, such as working with AWS, writing 
-> algorithms, and the graph data structures.
-> - Romuz Abdulhamidov
+> algorithms, and the graph data structures. - Romuz Abdulhamidov
 
 ## What's next for Arson
 - Scale up to entire California to generate a better map during wildfire 
