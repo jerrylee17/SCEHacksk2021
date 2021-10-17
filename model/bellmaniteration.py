@@ -231,7 +231,7 @@ WIND_SIMULATION_2 = {
     6: {7: 15},
     7: {},
     8: {7: 11},
-    9: {9: 10},
+    9: {8: 10},
 }
 
 # Southeast breeze with airbender in santa clara
@@ -259,12 +259,13 @@ WIND_SIMULATION_RANDOM = {
     6: {7: 15},
     7: {},
     8: {7: 11},
-    9: {9: 10},
+    9: {8: 10},
 }
+
 for key, value in WIND_SIMULATION_RANDOM.items():
     for k, v in value.items():
         # Random float between 0 and 20
-        WIND_SIMULATION_RANDOM[key][k] = random()*20
+        WIND_SIMULATION_RANDOM[key][k] = random()*10+10
 # pp.pprint(WIND_SIMULATION_RANDOM)
 
 DEFAULT_RISK = 0.02
