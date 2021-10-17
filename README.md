@@ -1,7 +1,7 @@
 ![Logo](web/public/favicon.ico?raw=true) We're Team Arson and we're using 
 the power of predictive modeling to combat wildfires.
 
-![Screenshot](</SCE-Hacks-png/SCEhacks Arson Project.jpg>)
+# [Arson Map](http://sce-hacks-arson-deployment.s3-website-us-west-1.amazonaws.com/)
 
 ## Inspiration
 There’s been a lot of wildfires in California in recent years, and a lot of 
@@ -75,4 +75,5 @@ season
 - Automatically train and deploy models by integrating real-time data for 
 wind and wildfires
 
-
+## Demo
+![Screenshot](</SCE-Hacks-png/SCEhacks Arson Project.jpg>)
